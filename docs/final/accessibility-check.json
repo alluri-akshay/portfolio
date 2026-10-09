@@ -1,0 +1,14 @@
+{
+  "contrastFailures": [
+    {
+      "background": "rgb(246, 245, 240)",
+      "foreground": "rgb(137, 147, 160)",
+      "ratio": 2.85,
+      "text": "/"
+    }
+  ],
+  "font": "\"Manrope Variable\", \"Segoe UI\", Arial, sans-serif",
+  "h1Count": 1,
+  "mainCount": 1,
+  "missingAlts": 0
+}
