@@ -1,9 +1,11 @@
 import vinext from "vinext";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import { sites } from "./build/sites-vite-plugin";
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
+const isVercelDeployment = process.env.VERCEL === "1";
 
 const localBindingConfig = {
   main: "./worker/index.ts",
@@ -19,8 +21,13 @@ export default defineConfig(async () => {
   process.env.WRANGLER_LOG_PATH ??= ".wrangler/logs";
   process.env.MINIFLARE_REGISTRY_PATH ??= ".wrangler/registry";
 
-  // Wrangler snapshots its log path while the Cloudflare plugin is imported.
-  const { cloudflare } = await import("@cloudflare/vite-plugin");
+  const deploymentPlugin =
+    isVercelDeployment
+      ? (await import("nitro/vite")).nitro({ preset: "vercel" })
+      : (await import("@cloudflare/vite-plugin")).cloudflare({
+          viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+          config: localBindingConfig,
+        });
 
   return {
     // Prebundle the lazy renderer with the same React instance as the app.
@@ -43,12 +50,10 @@ export default defineConfig(async () => {
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,
     plugins: [
+      tailwindcss(),
       vinext(),
       sites(),
-      cloudflare({
-        viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-        config: localBindingConfig,
-      }),
+      deploymentPlugin,
     ],
   };
 });

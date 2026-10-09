@@ -54,13 +54,14 @@ remain available for release work; routine development uses the checks above.
 | `public/` | Resume PDF, social preview image, and static assets |
 | `worker/index.ts` | Cloudflare worker and image optimization entry point |
 | `worker-env.d.ts` | Optional project binding types |
-| `vite.config.ts` | Vinext/Vite and Cloudflare development/build integration |
-| `.openai/hosting.json` | Existing Sites project identity and optional bindings |
+| `vite.config.ts` | Vinext/Vite with Cloudflare and Vercel deployment adapters |
 | `tests/` | Production rendered-HTML regression checks |
 | `docs/` | Content evidence checklist and browser baseline |
 
 React 19 and TypeScript run through Vinext's Next-compatible routing on Vite.
-Tailwind CSS 4 is imported, while the current design primarily uses custom CSS.
+Tailwind CSS 4 uses its Vite plugin, while the current design primarily uses
+custom CSS. Vercel builds use Nitro's Vercel preset; other builds retain the
+Cloudflare adapter.
 Cloudflare runtime types come from the pinned `@cloudflare/workers-types`
 development dependency.
 
@@ -106,8 +107,6 @@ Auto Auth demo imagery, and measured outcomes still need owner confirmation.
 
 ## Troubleshooting
 
-- Keep `.openai/hosting.json` encoded as UTF-8 **without a byte-order mark**.
-  A leading BOM caused the configuration bundler to fail with `JSON_PARSE`.
 - If the process cannot spawn child processes (`EPERM`), run the development
   command in a shell that permits Vite and Cloudflare's local runtime to start.
 - If Cloudflare types are missing, run `npm ci`; do not replace Worker APIs
