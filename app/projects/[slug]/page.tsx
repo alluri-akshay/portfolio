@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudy } from "../../components/case-study";
-import { ContactSection } from "../../components/contact";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteNavigation } from "../../components/site-navigation";
 import { getProjectBySlug, profile, projects } from "../../content/portfolio";
@@ -19,5 +18,5 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const project = getProjectBySlug((await params).slug);
   if (!project) notFound();
   const nextProject = projects[(projects.indexOf(project) + 1) % projects.length];
-  return <><SiteNavigation profile={profile} /><main id="main-content" tabIndex={-1}><CaseStudy project={project} nextProject={nextProject} /><ContactSection profile={profile} /></main><SiteFooter profile={profile} /></>;
+  return <><SiteNavigation profile={profile} /><main id="main-content" tabIndex={-1}><CaseStudy project={project} nextProject={nextProject} /></main><SiteFooter profile={profile} /></>;
 }

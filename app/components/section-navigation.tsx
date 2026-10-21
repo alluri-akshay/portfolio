@@ -1,24 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useSyncExternalStore } from "react";
 import { m, useScroll } from "motion/react";
 import { ArrowUpRight } from "./icons";
 
-const sections = [["work", "Work"], ["experience", "Experience"], ["about", "About"], ["contact", "Contact"]] as const;
+const sections = [["/projects", "Projects", "work"], ["/experience", "Experience", "experience"], ["/about", "About", "about"], ["/contact", "Contact", "contact"]] as const;
 const listeners = new Set<() => void>();
 let active = "";
 let frame = 0;
-
 function update() {
   frame = 0;
   let next = "";
-  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 8) next = "contact";
-  else for (const [id] of sections) {
-    const target = document.getElementById(id);
-    if (target && target.getBoundingClientRect().top <= Math.min(180, innerHeight * 0.3)) next = id;
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 8) next = "/contact";
+  else for (const [path, , id] of sections) {
+    const section = document.getElementById(id);
+    if (section && section.getBoundingClientRect().top <= 180) next = path;
   }
-  if (next !== active) { active = next; listeners.forEach((listener) => listener()); }
+  if (next !== active) { active = next; listeners.forEach(listener => listener()); }
 }
 function schedule() { if (!frame) frame = requestAnimationFrame(update); }
 function subscribe(listener: () => void) {
@@ -41,9 +41,11 @@ const noSubscription = () => () => {};
 const serverSnapshot = () => "";
 
 export function SectionLinks({ home, mobile = false, onNavigate }: { home: boolean; mobile?: boolean; onNavigate?: () => void }) {
-  const current = useSyncExternalStore(home ? subscribe : noSubscription, () => home ? active : "", serverSnapshot);
-  return <>{sections.map(([id, label]) => <Link key={id} href={`${home ? "" : "/"}#${id}`}
-    aria-current={current === id ? "location" : undefined} onClick={onNavigate}>
+  const pathname = usePathname();
+  const visible = useSyncExternalStore(home ? subscribe : noSubscription, () => home ? active : "", serverSnapshot);
+  useEffect(() => { if (home) schedule(); }, [home, pathname]);
+  return <>{sections.map(([path, label]) => <Link key={path} href={path} scroll={false}
+    aria-current={home ? visible === path ? "location" : undefined : pathname === path || pathname.startsWith(`${path}/`) ? "page" : undefined} onClick={onNavigate}>
     {label}{mobile && <ArrowUpRight size={18} aria-hidden="true" />}
   </Link>)}</>;
 }

@@ -1,0 +1,27 @@
+.section { background: var(--background); padding-block: var(--section-divider-space); }
+.heading { margin-bottom: 22px; }
+.heading :is(h1, h2) { margin: 0; color: var(--text-primary); font-size: var(--type-section); line-height: 1.2; letter-spacing: -.04em; font-weight: 700; }
+.roles { display: grid; gap: 20px; }
+.card { display: grid; grid-template-columns: minmax(220px, .9fr) minmax(0, 2fr); overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+.company { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; border-right: 1px solid var(--border); background: var(--surface-subtle); text-align: center; }
+.logo { display: block; flex: none; width: 80px; height: 80px; object-fit: contain; border-radius: 18px; background: #fff; }
+.companyName { display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-top: 18px; color: var(--text-primary); font-size: 19px; line-height: 1.5; font-weight: 650; letter-spacing: -.025em; }
+.companyName svg { flex: none; color: var(--text-secondary); }
+a.companyName:is(:hover, :focus-visible) { color: var(--accent); }
+.dates { margin: 7px 0 0; color: var(--text-secondary); font-size: 11px; line-height: 1.8; font-variant-numeric: tabular-nums; }
+.details { min-width: 0; padding: clamp(24px, 3vw, 34px); }
+.roleLabel { margin: 0 0 8px; color: var(--text-secondary); font-size: 11px; line-height: 1.6; }
+.details h3 { margin: 0; color: var(--text-primary); font-size: var(--type-card-title); line-height: 1.35; letter-spacing: -.035em; font-weight: 650; }
+.focus { margin: 9px 0 0; color: var(--accent); font-size: 12px; line-height: 1.8; }
+.contributions { margin: 20px 0 0; }
+.contribution { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr); gap: 16px; padding-block: 15px; border-top: 1px solid var(--border); }
+.contribution dt { color: var(--text-primary); font-size: 12px; font-weight: 600; line-height: 1.8; }
+.contribution dd { min-width: 0; margin: 0; color: var(--text-secondary); font-size: 12px; line-height: 1.8; }
+.stack { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 17px; }
+.stack > span { color: var(--text-secondary); font-size: 10px; line-height: 1.6; }
+.technologies { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.technologies li { padding: 4px 8px; border-radius: 4px; background: var(--surface-subtle); color: var(--text-secondary); font-size: 10px; line-height: 1.6; }
+@media (max-width: 900px) { .card { grid-template-columns: minmax(180px, .8fr) minmax(0, 2fr); } .company { padding: 24px 18px; } .contribution { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+@media (max-width: 640px) { .card { grid-template-columns: minmax(0, 1fr); border-radius: 14px; } .company { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; padding: 22px; border-right: 0; border-bottom: 1px solid var(--border); text-align: left; } .logo { grid-row: span 2; width: 56px; height: 56px; border-radius: 12px; } .companyName { justify-content: flex-start; align-self: end; margin-top: 0; font-size: 17px; } .dates { align-self: start; margin: 0; } .details { padding: 22px; } .contributions { margin-top: 18px; } }
+@media (max-width: 480px) { .heading { margin-bottom: 20px; } }
+

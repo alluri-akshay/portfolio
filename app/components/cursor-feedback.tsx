@@ -26,7 +26,7 @@ export function CursorFeedback() {
     let mode = "", tone = "";
     function targetStyle(target: Element | null) {
       const action = target?.closest('a[href], button:not(:disabled), [role="button"]');
-      const preview = Boolean(action?.matches('.projectImage, .heroPanel a, .heroSceneLinks a, .conceptLink, .nextProject'));
+      const preview = Boolean(action?.matches('.heroPanel a, .heroSceneLinks a, .conceptLink, .nextProject'));
       const nextMode = preview ? "preview" : action ? "action" : "rest";
       const nextTone = target?.closest(".primary, .navCta") ? "light" : target?.closest(".experience") ? "feature" : "blue";
       restingSize = preview ? 56 : action ? 36 : 26;
@@ -40,7 +40,8 @@ export function CursorFeedback() {
     function update() {
       frame = 0;
       const target = document.elementFromPoint(latestX, latestY);
-      if (target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) { reset(); return; }
+      // Project previews are ordinary links; keep the image clear and use the native cursor.
+      if (target?.closest('.projectImage, input, textarea, select, [contenteditable]:not([contenteditable="false"])')) { reset(); return; }
       if (!shown) { ringX.jump(latestX); ringY.jump(latestY); }
       x.set(latestX); y.set(latestY); targetStyle(target);
       visible.set(1); shown = true;

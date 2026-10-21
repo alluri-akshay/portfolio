@@ -24,14 +24,15 @@ function roundedSurface(width: number, height: number, radius: number) {
     .quadraticCurveTo(x, y, x + radius, y);
 }
 
-function ProjectSurfaces({ surfaces, theme, active }: Pick<Props, "surfaces" | "active"> & { theme: ResolvedTheme }) {
+function ProjectSurfaces({ surfaces, theme, active, progress }: Pick<Props, "surfaces" | "active" | "progress"> & { theme: ResolvedTheme }) {
   const { invalidate, gl } = useThree();
   const panels = useRef<(Group | null)[]>([]);
   const elapsed = useRef(0);
+  const scroll = useRef(0);
   const textures = useLoader(TextureLoader, surfaces.map(surface => surface.src));
   const resources = useMemo(() => ({
     panels: surfaces.map((surface, index) => {
-      const width = index === 0 ? motionTokens.camera.backWidth : motionTokens.camera.frontWidth;
+      const width = index === 0 ? motionTokens.camera.frontWidth : motionTokens.camera.backWidth;
       const height = width * surface.height / surface.width;
       const radius = motionTokens.camera.cornerRadius;
       const image = new ShapeGeometry(roundedSurface(width, height, radius), 12);
@@ -59,13 +60,17 @@ function ProjectSurfaces({ surfaces, theme, active }: Pick<Props, "surfaces" | "
   }, [textures, resources, surfaces]);
   useEffect(() => {
     resources.border.setValues({
-      color: theme === "dark" ? "#202d40" : "#ffffff",
+      color: theme === "dark" ? "#292e2d" : "#ffffff",
       roughness: theme === "dark" ? 0.8 : 0.65,
     });
     invalidate();
   }, [theme, resources, invalidate]);
   useFrame((_, delta) => {
     if (!active) return;
+    const targetScroll = Math.max(0, Math.min(1, progress.get()));
+    scroll.current += (targetScroll - scroll.current) * (1 - Math.exp(-8 * Math.min(delta, .05)));
+    const scrolling = Math.abs(targetScroll - scroll.current) > .0001;
+    if (!scrolling) scroll.current = targetScroll;
     const duration = motionTokens.depth.heroUnfold;
     const total = duration + (surfaces.length - 1) * motionTokens.depth.heroStagger;
     elapsed.current = Math.min(total, elapsed.current + Math.min(delta, 0.05));
@@ -74,17 +79,18 @@ function ProjectSurfaces({ surfaces, theme, active }: Pick<Props, "surfaces" | "
       const t = Math.max(0, Math.min(1, (elapsed.current - index * motionTokens.depth.heroStagger) / duration));
       const unfold = 1 - Math.pow(1 - t, 3);
       const remaining = 1 - unfold;
-      const back = index === 0;
-      panel.position.set((back ? -0.45 : 0.48) * unfold, (back ? 0.42 : -0.48) - remaining * 0.45, (back ? -0.3 : 0.45) - remaining * 0.8);
-      panel.rotation.set((back ? 0.04 : -0.03) + remaining * 0.24, (back ? -0.13 : 0.1) + remaining * (back ? -0.22 : 0.22), (back ? 0.07 : -0.07) * unfold);
+      const back = index !== 0;
+      const alignment = 1 - scroll.current;
+      panel.position.set(back ? -.45 : 0, (back ? .42 : .06) - remaining * .4 + scroll.current * .12, (back ? -.3 : .45) - remaining * 1.1);
+      panel.rotation.set((back ? .04 : -.04) * alignment + remaining * .28, (back ? -.13 : -.12) * alignment + remaining * .2, (back ? .07 : -.025) * unfold * alignment);
     });
     const entering = elapsed.current < total;
     gl.domElement.setAttribute("data-intro-state", entering ? "unfolding" : "settled");
-    if (entering) invalidate();
+    if (entering || scrolling) invalidate();
   });
   return <group dispose={null}>{surfaces.map((surface, index) => {
-    return <group ref={node => { panels.current[index] = node; }} key={surface.slug} position={index === 0 ? [-0.45, 0.42, -0.3] : [0.48, -0.48, 0.45]}
-      rotation={index === 0 ? [0.04, -0.13, 0.07] : [-0.03, 0.1, -0.07]}>
+    return <group ref={node => { panels.current[index] = node; }} key={surface.slug} position={index !== 0 ? [-0.45, 0.42, -0.3] : [0, 0.06, 0.45]}
+      rotation={index !== 0 ? [0.04, -0.13, 0.07] : [-0.04, -0.12, -0.025]}>
       <mesh geometry={resources.panels[index].board} material={resources.border} position={[0, 0, -.05]} />
       <mesh geometry={resources.panels[index].image} material={resources.images[index]} position={[0, 0, .106]} />
     </group>;
@@ -121,7 +127,7 @@ function CameraResponse({ pointerX, pointerY, progress, active, onReady }: Omit<
     const p = Math.max(0, Math.min(1, progress.get()));
     const distance = motionTokens.camera.distance + p * motionTokens.camera.scrollTravel;
     const response = Math.tan(motionTokens.camera.pointerAngle * Math.PI / 180) * motionTokens.camera.distance * (1 - p);
-    target.set(0.5 * (1 - p) + Math.max(-1, Math.min(1, pointerX.get())) * response, 0.24 * (1 - p) - Math.max(-1, Math.min(1, pointerY.get())) * response, distance);
+    target.set(0.12 * (1 - p) + Math.max(-1, Math.min(1, pointerX.get())) * response, 0.12 * (1 - p) - Math.max(-1, Math.min(1, pointerY.get())) * response, distance);
     camera.position.lerp(target, 1 - Math.exp(-motionTokens.camera.settleSpeed * Math.min(delta, 0.05)));
     const settling = camera.position.distanceToSquared(target) > 0.000001;
     const entering = gl.domElement.getAttribute("data-intro-state") === "unfolding";
@@ -144,13 +150,13 @@ export default function Hero3DScene(props: Props) {
   const dark = resolved === "dark";
   const lighting = motionTokens.lighting[dark ? "dark" : "light"];
   return <Canvas frameloop={props.active ? "demand" : "never"} dpr={[1, motionTokens.camera.maxDpr]}
-    camera={{ position: [0.5, 0.24, motionTokens.camera.distance], fov: 38 }}
+    camera={{ position: [0.12, 0.12, motionTokens.camera.distance], fov: 38 }}
     gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}>
     <ContextGuard onFailure={props.onFailure} />
     <ambientLight intensity={lighting.ambient} />
     <directionalLight position={[3, 4, 5]} intensity={lighting.key} />
-    <directionalLight position={[-4, 1, 2]} intensity={lighting.edge} color={dark ? "#9bbaff" : "#ffffff"} />
-    <Suspense fallback={null}><ProjectSurfaces surfaces={props.surfaces} theme={resolved} active={props.active} />
+    <directionalLight position={[-4, 1, 2]} intensity={lighting.edge} color={dark ? "#d7e5dd" : "#ffffff"} />
+    <Suspense fallback={null}><ProjectSurfaces surfaces={props.surfaces} theme={resolved} active={props.active} progress={props.progress} />
       <CameraResponse {...props} /></Suspense>
   </Canvas>;
 }

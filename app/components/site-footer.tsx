@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowUp } from "./icons";
+import { BackToTop } from "./back-to-top";
 import type { Profile } from "../content/portfolio";
 import { MotionToggle } from "./motion-preferences";
 
 export function SiteFooter({ profile }: { profile: Profile }) {
   return <footer className="footer"><div className="shell">
-    <span>© {profile.year} {profile.name}</span>
-    <div className="footerActions"><MotionToggle /><Link href="#top">Back to top<ArrowUp size={16} aria-hidden="true" /></Link></div>
+    <div className="footerIdentity"><Link className="footerName" href="/">{profile.name}<span aria-hidden="true">↗</span></Link><span>Software developer · React & browser automation</span><small>© {profile.year} {profile.name}</small></div>
+    <div className="footerActions"><MotionToggle /><BackToTop /></div>
   </div></footer>;
 }

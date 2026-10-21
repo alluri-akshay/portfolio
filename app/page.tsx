@@ -13,11 +13,13 @@ export default function Home() {
   return <>
     <SiteNavigation profile={profile} home />
     <main id="main-content" tabIndex={-1}>
-      <Hero profile={profile} projects={projects} />
-      <div className="technologyStrip shell"><span>What I work with</span><ul>{["React", "JavaScript", "Tailwind CSS", "Chrome APIs", "Git & GitHub"].map((technology) => <li key={technology}>{technology}</li>)}</ul></div>
+      <Hero profile={profile} />
       <SelectedWork projects={projects} />
+      <div className="sectionDivider shell" aria-hidden="true" />
       <ExperienceSection experiences={experiences} />
+      <div className="sectionDivider shell" aria-hidden="true" />
       <AboutSection profile={profile} skillGroups={skillGroups} />
+      <div className="sectionDivider shell" aria-hidden="true" />
       <CredentialsSection credentials={credentials} />
       <ContactSection profile={profile} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, "\\u003c") }} />

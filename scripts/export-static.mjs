@@ -35,12 +35,12 @@ const result = spawnSync(process.execPath, [require.resolve("next/dist/bin/next"
 if (result.error) throw result.error;
 if (result.status !== 0) process.exit(result.status || 1);
 const built = path.join(stage, "out");
-for (const name of ["index.html", "projects/career-nexus/index.html", "projects/auto-auth/index.html", "projects/burger-hut/index.html", "Akshay-Alluri-Resume.pdf"]) {
+for (const name of ["index.html", "projects/index.html", "experience/index.html", "about/index.html", "contact/index.html", "projects/career-nexus/index.html", "projects/auto-auth/index.html", "projects/burger-hut/index.html", "Akshay-Alluri-Resume.pdf"]) {
   if (!existsSync(path.join(built, name))) throw new Error(`Missing export: ${name}`);
 }
 cleanGenerated(output, "out");
 cpSync(built, output, { recursive: true });
 writeFileSync(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
-const routes = ["/", "/projects/career-nexus/", "/projects/auto-auth/", "/projects/burger-hut/"];
+const routes = ["/", "/projects/", "/experience/", "/about/", "/contact/", "/projects/career-nexus/", "/projects/auto-auth/", "/projects/burger-hut/"];
 writeFileSync(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(route => `<url><loc>${origin}${route}</loc></url>`).join("")}</urlset>`);
 console.log(`\nUpload this folder to Vercel Drop: ${output}\nCanonical site URL: ${origin}`);

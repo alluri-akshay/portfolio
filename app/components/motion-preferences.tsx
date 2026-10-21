@@ -1,45 +1,15 @@
 "use client";
 
-import { LazyMotion, MotionConfig, domAnimation, useReducedMotion } from "motion/react";
+import { LazyMotion, MotionConfig, domAnimation } from "motion/react";
 import { createContext, useContext, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import { motionTokens } from "../lib/motion-tokens";
+import { getMotionSnapshot, getServerMotionSnapshot, setReducedMotion, subscribeMotion } from "../lib/motion-preference";
 
-const storageKey = "portfolio.reduce-motion";
-const changeEvent = "portfolio:motion-preference";
-let volatilePreference: boolean | undefined;
-
-function snapshot(): boolean {
-  if (volatilePreference !== undefined) return volatilePreference;
-  try { return localStorage.getItem(storageKey) === "true"; }
-  catch { return false; }
-}
-
-function subscribe(onChange: () => void) {
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === storageKey || event.key === null) { volatilePreference = undefined; onChange(); }
-  };
-  window.addEventListener(changeEvent, onChange);
-  window.addEventListener("storage", onStorage);
-  return () => {
-    window.removeEventListener(changeEvent, onChange);
-    window.removeEventListener("storage", onStorage);
-  };
-}
-
-function setPreference(value: boolean) {
-  volatilePreference = value;
-  try { localStorage.setItem(storageKey, String(value)); volatilePreference = undefined; }
-  catch { /* Keep the choice for this session if browser storage is blocked. */ }
-  window.dispatchEvent(new Event(changeEvent));
-}
-
-interface MotionPreference { reduced: boolean; systemReduced: boolean; setReduced: (value: boolean) => void }
+interface MotionPreference { reduced: boolean; setReduced: (value: boolean) => void }
 const PreferenceContext = createContext<MotionPreference | null>(null);
 
 export function MotionPreferences({ children }: { children: ReactNode }) {
-  const override = useSyncExternalStore(subscribe, snapshot, () => false);
-  const systemReduced = Boolean(useReducedMotion());
-  const reduced = override || systemReduced;
+  const reduced = useSyncExternalStore(subscribeMotion, getMotionSnapshot, getServerMotionSnapshot);
   const timings = {
     "--motion-feedback": `${motionTokens.duration.feedback}s`,
     "--motion-navigation": `${motionTokens.duration.navigation}s`,
@@ -52,9 +22,9 @@ export function MotionPreferences({ children }: { children: ReactNode }) {
   } as CSSProperties;
 
   return (
-    <PreferenceContext.Provider value={{ reduced, systemReduced, setReduced: setPreference }}>
+    <PreferenceContext.Provider value={{ reduced, setReduced: setReducedMotion }}>
       <LazyMotion features={domAnimation} strict>
-        <MotionConfig reducedMotion={override ? "always" : "user"} transition={{ duration: motionTokens.duration.entrance, ease: motionTokens.easeOut }}>
+        <MotionConfig reducedMotion={reduced ? "always" : "never"} transition={{ duration: motionTokens.duration.entrance, ease: motionTokens.easeOut }}>
           <div className="motionRoot" data-motion={reduced ? "reduced" : "full"} style={timings}>{children}</div>
         </MotionConfig>
       </LazyMotion>
@@ -69,12 +39,12 @@ export function useMotionPreference() {
 }
 
 export function MotionToggle() {
-  const { reduced, systemReduced, setReduced } = useMotionPreference();
+  const { reduced, setReduced } = useMotionPreference();
   return (
-    <button className="motionToggle" aria-pressed={reduced} disabled={systemReduced}
-      title={systemReduced ? "Reduced motion is enabled by your device preference." : "Reduce animations throughout this site."}
+    <button className="motionToggle" aria-pressed={!reduced}
+      title="Turn page animations on or off. The robot stays animated. This choice is independent of device settings."
       onClick={() => setReduced(!reduced)}>
-      Reduce motion <span>{reduced ? "On" : "Off"}</span>
+      <span className="motionIndicator" aria-hidden="true" /> Animations <span>{reduced ? "Off" : "On"}</span>
     </button>
   );
 }

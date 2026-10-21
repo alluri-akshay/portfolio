@@ -24,7 +24,7 @@ test("server-renders the portfolio and its hiring information", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<html[^>]*lang="en"/);
-  assert.match(html, /<title>Akshay Alluri \| Frontend Developer<\/title>/);
+  assert.match(html, /<title>Akshay Alluri \| Software Developer<\/title>/);
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
   for (const content of ["Akshay Alluri", "Career Nexus", "Auto Auth", "Burger Hut", "TaskLabs", "Pragati Engineering College"]) {
     assert.ok(html.includes(content), `Missing portfolio content: ${content}`);
@@ -42,28 +42,14 @@ test("internal section links lead to rendered sections", async () => {
   }
 });
 
-test("hero provides screenshot links before the decorative scene loads", async () => {
+test("hero introduces the developer with a usable scene before hydration", async () => {
   const html = await (await render()).text();
-  assert.match(html, /class="heroEnhancement" data-scene="static"/);
-  assert.match(html, /aria-label="Explore Career Nexus"/);
-  assert.match(html, /aria-label="Explore Burger Hut"/);
+  assert.match(html, /Alluri Akshay/);
+  assert.match(html, /Software developer/);
+  assert.match(html, /aria-label="An interactive silver robot/);
+  assert.match(html, /Explore my work/);
   assert.doesNotMatch(html, /<canvas\b/);
   assert.doesNotMatch(html, /<link[^>]*rel="modulepreload"[^>]*hero-3d-scene/);
-});
-
-if (!devBaseUrl) test("3D renderer stays outside the hero's initial dependency graph", async () => {
-  const manifest = JSON.parse(await readFile(new URL("../dist/client/.vite/manifest.json", import.meta.url), "utf8"));
-  const sceneKey = "app/components/hero-3d-scene.tsx";
-  const heroKey = "app/components/hero-showcase.tsx";
-  assert.ok(manifest[heroKey].dynamicImports.includes(sceneKey));
-  const visited = new Set();
-  function visit(key) {
-    if (visited.has(key)) return;
-    visited.add(key);
-    for (const dependency of manifest[key]?.imports ?? []) visit(dependency);
-  }
-  visit(heroKey);
-  assert.ok(!visited.has(sceneKey), "3D renderer must not be an initial static dependency");
 });
 
 test("provides a real resume file and direct contact links", async () => {
@@ -97,6 +83,24 @@ test("unknown routes return a not-found response", async () => {
   assert.equal((await render("/missing-portfolio-page")).status, 404);
 });
 
+test("named section routes load directly with headings, metadata, and clean navigation", async () => {
+  const routes = [["/projects", "Projects"], ["/experience", "Experience"], ["/about", "About &amp; skills"], ["/contact", "Get in touch."]];
+  const home = await (await render()).text();
+  for (const [path, heading] of routes) {
+    assert.ok(home.includes(`href="${path}"`));
+    const response = await render(path, { "x-forwarded-host": "portfolio.example.com", "x-forwarded-proto": "https" });
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.equal((html.match(/<h1\b/g) ?? []).length, 1, path);
+    assert.ok(html.includes(heading), path);
+    for (const section of ["top", "work", "experience", "about", "education", "contact"]) {
+      assert.ok(html.includes(`id="${section}"`), `Missing surrounding section ${section} at ${path}`);
+    }
+    assert.ok(html.includes(`href="https://portfolio.example.com${path}"`), `Missing canonical: ${path}`);
+    assert.doesNotMatch(html, /href="\/?#(?:work|experience|about|contact|top)"/);
+  }
+});
+
 test("each project links to a directly accessible page with its own metadata", async () => {
   const homeHtml = await (await render()).text();
   const projectPages = [
@@ -112,7 +116,7 @@ test("each project links to a directly accessible page with its own metadata", a
     assert.ok(html.includes(`<title>${title} | Akshay Alluri</title>`));
     assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
     assert.ok(html.includes("My contribution"));
-    assert.ok(html.includes('href="/#work"'));
+    assert.ok(html.includes('href="/projects"'));
     assert.ok(html.includes("Next project:"));
     assert.match(html, /property="og:image"/);
     assert.doesNotMatch(html, /href="(?:undefined|null|#)"/);
@@ -124,7 +128,7 @@ test("unknown project slugs return 404 with recovery navigation", async () => {
   assert.equal(response.status, 404);
   const html = await response.text();
   assert.ok(html.includes("Page not found."));
-  assert.ok(html.includes('href="/#work"'));
+  assert.ok(html.includes('href="/projects"'));
 });
 
 test("project section links resolve and canonical URLs match the requested page", async () => {
@@ -145,8 +149,8 @@ test("robots and sitemap include the public home and project URLs", async () => 
   assert.equal(sitemap.status, 200);
   assert.match(sitemap.headers.get("content-type") ?? "", /application\/xml/);
   const xml = await sitemap.text();
-  assert.equal((xml.match(/<url>/g) ?? []).length, 4);
-  for (const path of ["/", "/projects/career-nexus", "/projects/auto-auth", "/projects/burger-hut"]) {
+  assert.equal((xml.match(/<url>/g) ?? []).length, 8);
+  for (const path of ["/", "/projects", "/experience", "/about", "/contact", "/projects/career-nexus", "/projects/auto-auth", "/projects/burger-hut"]) {
     assert.ok(xml.includes(`<loc>https://portfolio.example.com${path}</loc>`));
   }
   const robots = await render("/robots.txt", headers);

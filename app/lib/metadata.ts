@@ -17,7 +17,7 @@ export async function pageMetadata(
     title,
     description,
     alternates: { canonical: `${origin}${path}` },
-    icons: { icon: "/favicon.svg" },
+    icons: { icon: { url: "/favicon.svg?v=aa-1", type: "image/svg+xml", sizes: "any" } },
     openGraph: {
       title,
       description,

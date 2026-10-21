@@ -12,8 +12,8 @@ function subscribe(onChange: () => void) {
 function snapshot() { return window.matchMedia(query).matches; }
 const serverSnapshot = () => false;
 
-export function useDesktopInteraction() {
+export function useDesktopInteraction({ respectMotionPreference = true }: { respectMotionPreference?: boolean } = {}) {
   const eligible = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
   const { reduced } = useMotionPreference();
-  return eligible && !reduced;
+  return eligible && (!respectMotionPreference || !reduced);
 }

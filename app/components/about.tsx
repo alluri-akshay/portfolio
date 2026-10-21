@@ -1,17 +1,27 @@
-import Link from "next/link";
 import { ArrowUpRight } from "./icons";
+import { SocialBrandIcon } from "./social-brand-icon";
 import type { Profile, SkillGroup } from "../content/portfolio";
 import { Reveal } from "./motion";
-import { DepthSurface } from "./depth-surface";
+import styles from "@/app/components/profile-sections.module.css";
 
-export function AboutSection({ profile, skillGroups }: { profile: Profile; skillGroups: SkillGroup[] }) {
-  const codingProfiles = profile.socials.filter((social) => ["LeetCode", "HackerRank"].includes(social.label));
-  return (
-    <section className="section shell about" id="about" aria-labelledby="about-title">
-      <div><Reveal variant="quiet"><p className="eyebrow">03 / About & skills</p><h2 id="about-title">Curious about code.<br /><em>Thoughtful about people.</em></h2></Reveal><Reveal as="p" variant="quiet" delay={0.06} className="aboutText">{profile.about}</Reveal><a className="textLink" href={`mailto:${profile.email}`}>Say hello<ArrowUpRight size={17} aria-hidden="true" /></a>
-        <div className="codingProfiles"><span>Coding profiles</span><nav aria-label="Coding profiles">{codingProfiles.map((social) => <a key={social.label} href={social.url} target="_blank" rel="noreferrer">{social.label}<ArrowUpRight size={15} aria-hidden="true" /></a>)}</nav></div>
-      </div>
-      <div className="skills">{skillGroups.map((group, index) => <Reveal as="article" variant="quiet" delay={index * 0.06} key={group.title}><DepthSurface className="skillDepth" trigger="article"><span className="skillNumber">0{index + 1}</span><h3>{group.title}</h3><p>{group.skills.join(" · ")}</p></DepthSurface><Link href={`/projects/${group.projectSlug}`}>{group.projectLabel}<ArrowUpRight size={15} aria-hidden="true" /></Link></Reveal>)}</div>
-    </section>
-  );
+export function AboutSection({ profile, skillGroups, standalone = false }: { profile: Profile; skillGroups: SkillGroup[]; standalone?: boolean }) {
+  const Heading = standalone ? "h1" : "h2";
+  return <section className={`${styles.about} shell`} id="about" aria-labelledby="about-title">
+    <Reveal variant="quiet" className={styles.heading}><Heading id="about-title" tabIndex={standalone ? -1 : undefined}>About & skills</Heading></Reveal>
+    <div className={styles.aboutLayout}>
+      <Reveal variant="quiet" className={styles.intro}>
+        <p>{profile.about}</p>
+        <nav className={styles.profiles} aria-label="Professional and coding profiles">{profile.socials.map(social => <a className={["GitHub", "LinkedIn"].includes(social.label) ? styles.primaryProfile : undefined} href={social.url} key={social.label} target="_blank" rel="noreferrer"><SocialBrandIcon name={social.label} className={styles.brandIcon} /><span>{social.label}</span><ArrowUpRight size={12} aria-hidden="true" /></a>)}</nav>
+      </Reveal>
+      <Reveal variant="quiet" className={styles.skillsPanel}>
+        {skillGroups.map(group => <div className={styles.skillRow} key={group.title}>
+          <h3>{group.title}</h3>
+          <div className={styles.skillContent}>
+            <ul className={styles.skillList} aria-label={`${group.title} technologies`}>{group.skills.map(skill => <li key={skill}>{skill}</li>)}</ul>
+            {!!group.capabilities?.length && <p className={styles.capabilities}>{group.capabilities.join(" · ")}</p>}
+          </div>
+        </div>)}
+      </Reveal>
+    </div>
+  </section>;
 }

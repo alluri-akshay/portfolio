@@ -3,6 +3,7 @@
 import { AnimatePresence, m, useIsPresent } from "motion/react";
 import { ArrowUpRight, Download, Menu, X } from "./icons";
 import { useEffect, useId, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { SectionLinks } from "./section-navigation";
 import { useMotionPreference } from "./motion-preferences";
 import { motionTokens } from "../lib/motion-tokens";
@@ -24,6 +25,11 @@ function MenuPanel({ id, home, resumeUrl, email, close }: { id: string; home: bo
 }
 
 export function MobileNavigation({ home, resumeUrl, email }: { home: boolean; resumeUrl: string; email: string }) {
+  const pathname = usePathname();
+  return <MobileNavigationMenu key={pathname} home={home} resumeUrl={resumeUrl} email={email} />;
+}
+
+function MobileNavigationMenu({ home, resumeUrl, email }: { home: boolean; resumeUrl: string; email: string }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const button = useRef<HTMLButtonElement>(null);
@@ -39,7 +45,13 @@ export function MobileNavigation({ home, resumeUrl, email }: { home: boolean; re
   }, [open]);
   return <div className="mobileNavigation" ref={root}>
     <button ref={button} className="menuButton" aria-expanded={open} aria-controls={open ? menuId : undefined}
-      aria-label={open ? "Close navigation" : "Open navigation"} onClick={() => setOpen(!open)}>
+      aria-label={open ? "Close navigation" : "Open navigation"}
+      onPointerDown={event => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        event.currentTarget.focus({ preventScroll: true });
+      }}
+      onClick={() => setOpen(!open)}>
       {open ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}<span>Menu</span>
     </button>
     <AnimatePresence initial={false}>{open && <MenuPanel key={menuId} id={menuId} home={home} resumeUrl={resumeUrl} email={email} close={close} />}</AnimatePresence>

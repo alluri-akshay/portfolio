@@ -1,0 +1,63 @@
+.section { --work-stage: #e9eeeb; padding-block: var(--section-divider-space); }
+.heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+.heading :is(h1, h2) { margin: 0; font-size: var(--type-section); letter-spacing: -.04em; line-height: 1.2; font-weight: 700; }
+.heading p { margin: 0 0 3px; max-width: 38ch; font-size: 13px; line-height: 1.75; color: var(--text-secondary); }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.card { min-width: 0; padding: 12px; border: 1px solid var(--border); border-radius: 22px; background: var(--surface); scroll-margin-top: calc(var(--site-header-height) + 20px); transition: transform 220ms var(--motion-ease-out, ease-out), box-shadow 220ms var(--motion-ease-out, ease-out); }
+.card[data-project="auto-auth"] { --work-stage: #e8eef3; }
+.card[data-project="burger-hut"] { --work-stage: #f1ebe4; }
+.cardInner { display: grid; grid-template-columns: minmax(0, 1.23fr) minmax(0, 1fr); align-items: stretch; }
+.visual { position: relative; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 330px; padding: clamp(20px, 2.6vw, 34px); border-radius: 12px; background: var(--work-stage); }
+.imageLink { position: relative; display: block; width: 100%; min-width: 0; perspective: 1000px; overflow: visible; background: transparent; }
+.preview { position: relative; width: 100%; }
+.previewPlane { position: relative; overflow: hidden; border: 1px solid rgb(25 35 40 / .12); border-radius: 7px; background: #f8faf9; box-shadow: 0 12px 24px rgb(14 25 30 / .12), 0 2px 5px rgb(14 25 30 / .04); }
+.previewPlane img { display: block; width: 100%; height: auto; transition: transform 220ms var(--motion-ease-out, ease-out); }
+.previewFallback { color: var(--text-primary); font-size: 20px; font-weight: 650; }
+.previewFallback span { display: block; margin-top: 12px; font-size: 12px; font-weight: 400; }
+.body { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: clamp(24px, 2.6vw, 36px); }
+.meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 17px; font-size: 10px; line-height: 1.6; color: var(--text-secondary); }
+.category { display: inline-flex; align-items: baseline; gap: 10px; }
+.number { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 650; }
+.featuredLabel { color: var(--accent); font-size: 9px; font-weight: 600; }
+.featuredLabel::before { content: "·"; margin-right: 10px; color: var(--text-secondary); }
+.body h3 { margin: 0; font-size: var(--type-card-title); line-height: 1.25; font-weight: 650; letter-spacing: -.035em; }
+.body h3 a:hover { color: var(--accent); }
+.summary { margin: 14px 0 0; max-width: 43ch; color: var(--text-secondary); font-size: 13px; line-height: 1.8; }
+.role { margin: 21px 0 0; font-size: 11px; line-height: 1.7; }
+.role dt { margin-bottom: 3px; color: var(--text-primary); font-size: 10px; font-weight: 650; }
+.role dd { margin: 0; color: var(--text-secondary); }
+.technologies { display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+.technologies li { color: var(--text-secondary); font-size: 10px; line-height: 1.6; }
+.technologies li:not(:last-child)::after { content: "/"; margin-left: 12px; color: var(--border-interactive); }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; margin-top: 24px; }
+.primaryLink, .externalLink { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; gap: 7px; font-size: 11px; line-height: 1.4; font-weight: 600; white-space: nowrap; }
+.primaryLink { gap: 12px; min-height: 40px; padding: 10px 14px; border-radius: 7px; background: var(--text-primary); color: var(--background); }
+.primaryLink:hover { background: var(--accent); color: var(--on-accent); }
+.externalLink { color: var(--text-secondary); }
+.primaryLink svg, .externalLink svg { flex: none; transition: transform 220ms var(--motion-ease-out, ease-out); }
+.primaryLink:focus-visible svg { transform: translateX(3px); }
+.primaryLink:active { background: var(--accent); color: var(--on-accent); }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px -8px rgb(var(--shadow-rgb) / .16); }
+  .card:hover .previewPlane img { transform: scale(1.02); }
+  .card:hover .primaryLink svg { transform: translateX(3px); }
+}
+.externalLink:hover { color: var(--text-primary); }
+:global(html[data-theme="dark"]) .section { --work-stage: #252c2a; }
+:global(html[data-theme="dark"]) .card[data-project="auto-auth"] { --work-stage: #252d35; }
+:global(html[data-theme="dark"]) .card[data-project="burger-hut"] { --work-stage: #302b26; }
+@media (max-width: 1000px) { .cardInner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } .visual { padding: 22px; } .body { padding: 24px; } .actions { gap: 4px 12px; } }
+@media (max-width: 760px) { .heading { align-items: start; flex-direction: column; gap: 15px; margin-bottom: 24px; } .heading p { max-width: 48ch; } .grid { gap: 24px; } .card { border-radius: 18px; padding: 9px; } .cardInner { grid-template-columns: minmax(0, 1fr); } .visual { min-height: 0; aspect-ratio: 1.5; padding: clamp(20px, 5vw, 32px); border-radius: 10px; } .body { padding: 24px 15px 15px; } .meta { margin-bottom: 12px; } .role { margin-top: 17px; } .actions { margin-top: 20px; } }
+@media (max-width: 380px) { .visual { padding: 17px; } .body { padding: 22px 11px 12px; } .actions { gap: 4px 12px; } .primaryLink { padding-inline: 12px; gap: 8px; } .meta { font-size: 9px; } }
+:global(html[data-motion="reduced"]) .card,
+:global(html[data-motion="reduced"]) .card .previewPlane img,
+:global(html[data-motion="reduced"]) .card .primaryLink svg,
+:global(html[data-motion="reduced"]) .card .externalLink svg { transform: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  :global(html:not([data-motion="full"])) .card,
+  :global(html:not([data-motion="full"])) .card .previewPlane img,
+  :global(html:not([data-motion="full"])) .card .primaryLink svg,
+  :global(html:not([data-motion="full"])) .card .externalLink svg { transform: none; transition: none; }
+}
+
+
