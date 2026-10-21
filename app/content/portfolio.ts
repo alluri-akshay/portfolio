@@ -75,7 +75,6 @@ export interface Credential {
 export interface SkillGroup {
   title: string;
   skills: string[];
-  capabilities?: string[];
 }
 
 // Personal contributions come from the existing resume. Repository/demo links
@@ -87,7 +86,7 @@ export const profile: Profile = {
   role: "Software developer",
   location: "Rajahmundry, India",
   introduction: "I build responsive web applications and browser automation with React and JavaScript.",
-  about: "I'm a computer science graduate working on product interfaces and browser extensions for SuperCommands.",
+  about: "I'm a software developer at SuperCommands, building web interfaces and browser extensions.",
   year: 2026,
   email: "alluriakshay878@gmail.com",
   phone: { display: "+91 73866 60463", uri: "tel:+917386660463" },
@@ -245,8 +244,8 @@ export const experiences: Experience[] = [{
 }];
 
 export const skillGroups: SkillGroup[] = [
+  { title: "Frontend", skills: ["React.js", "React Router", "Tailwind CSS"] },
   { title: "Languages", skills: ["Java", "JavaScript", "SQL"] },
-  { title: "Frontend", skills: ["React.js", "React Router", "Tailwind CSS"], capabilities: ["Form validation", "State management"] },
   { title: "Browser & storage", skills: ["Chrome extension APIs", "Chrome Storage", "localStorage"] },
   { title: "Tools & workflow", skills: ["Git", "GitHub", "Vite", "Vercel"] },
 ];

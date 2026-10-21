@@ -1,19 +1,20 @@
 .section:global(.contact) { padding-block: 0; border-top: 0; }
-.inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 48px; border-top: 1px solid var(--border); padding-block: var(--section-divider-space); }
-.copy { min-width: 0; }
-.eyebrow { margin: 0 0 14px; color: var(--accent); font-size: 12px; font-weight: 600; }
+.inner { border-top: 1px solid var(--border); padding-block: var(--section-divider-space); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 32px 48px; }
+.copy, .details { min-width: 0; }
 .copy :is(h1, h2) { margin: 0; font-size: var(--type-section); line-height: 1.2; letter-spacing: -.04em; font-weight: 700; }
-.description { max-width: 38ch; margin: 18px 0 0; color: var(--text-secondary); font-size: 14px; line-height: 1.8; }
-.emailPanel { min-width: 0; padding: 28px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
-.emailLabel { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: var(--text-secondary); font-size: 12px; }
-.emailLink { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; min-height: 44px; color: var(--accent); font-size: clamp(16px, 1.6vw, 20px); line-height: 1.5; font-weight: 600; letter-spacing: -.025em; }
-.emailLink span { min-width: 0; overflow-wrap: anywhere; }
-.emailLink svg { flex: none; transition: transform var(--motion-feedback, 140ms); }
-.emailLink:is(:hover, :focus-visible) span { text-decoration: underline; text-underline-offset: 5px; }
-.emailLink:is(:hover, :focus-visible) svg { transform: translate(2px, -2px); }
-.actions { margin-top: 18px; }
-.actions :global(.copyButton) { min-height: 44px; padding: 10px 14px; gap: 8px; border-radius: 8px; font-size: 12px; box-shadow: none; }
-@media (max-width: 900px) { .inner { gap: 28px; } .emailPanel { padding: 22px; } }
-@media (max-width: 760px) { .inner { grid-template-columns: minmax(0, 1fr); gap: 24px; } .description { margin-top: 14px; } .emailPanel { padding: 22px; } }
-:global(html[data-motion="reduced"]) .emailLink svg { transform: none; transition: none; }
-
+.description { margin: 14px 0 0; color: var(--text-secondary); font-size: 14px; line-height: 1.8; }
+.emailRow { display: flex; align-items: center; gap: 10px; }
+.emailLink { min-width: 0; min-height: 44px; display: inline-flex; align-items: center; overflow-wrap: anywhere; color: var(--accent); font-size: clamp(16px, 1.6vw, 21px); font-weight: 600; letter-spacing: -.025em; line-height: 1.6; }
+.emailLink:is(:hover, :focus-visible) { text-decoration: underline; text-underline-offset: 5px; }
+.emailRow :global(.copyEmail) { flex: none; }
+.emailRow :global(.compactCopy) { width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; gap: 0; border-color: transparent; border-radius: 8px; background: transparent; box-shadow: none; color: var(--text-secondary); }
+.emailRow :global(.compactCopy:hover) { background: var(--surface-subtle); color: var(--accent); }
+.emailRow :global(.compactCopy.isCopied) { color: var(--accent); }
+.emailRow :global(.copyError) { position: absolute; right: 0; width: 200px; padding: 8px; z-index: 1; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
+.links { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 12px; }
+.links a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+.links a:is(:hover, :focus-visible) { color: var(--accent); }
+.links svg { flex: none; }
+@media (max-width: 850px) { .layout { grid-template-columns: minmax(0, 1fr); gap: 20px; } }
+@media (max-width: 400px) { .emailLink { font-size: 15px; } .emailRow { gap: 4px; } .links { gap: 4px 20px; margin-top: 8px; } }

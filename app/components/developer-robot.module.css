@@ -1,18 +1,22 @@
 .robot { width: 100%; }
-/* Reserve real space so the greeting never overlaps the animated character. */
-.greetingSlot { position: relative; z-index: 2; height: 64px; display: flex; justify-content: center; align-items: flex-start; }
+/* Keep the layout stable, but bring the bubble into the SVG's empty top space. */
+.greetingSlot { position: relative; z-index: 2; height: 64px; display: flex; justify-content: center; align-items: flex-end; transform: translateY(4px); }
 .greeting { position: relative; max-width: calc(100% - 24px); padding: 8px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-soft); text-align: center; pointer-events: none; }
 .greeting::after { content: ""; position: absolute; width: 8px; height: 8px; bottom: -5px; left: calc(50% - 4px); background: var(--surface); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); transform: rotate(45deg); }
 .greeting strong { display: block; color: var(--text-primary); font-size: 12px; font-weight: 600; line-height: 1.5; }
 .greeting > span { display: block; color: var(--text-secondary); font-size: 10px; line-height: 1.5; }
 .scene { position: relative; width: 100%; margin-top: 8px; aspect-ratio: 48 / 47; isolation: isolate; perspective: 1000px; }
 .halo { position: absolute; inset: 13% 6% 7%; z-index: -1; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--accent) 9%, transparent), transparent 68%); }
-.orbit { position: absolute; width: 88%; height: 82%; left: 5%; top: 5%; border: 1px solid color-mix(in srgb, var(--border-interactive) 18%, transparent); border-radius: 50%; transform: rotate(-22deg); mask-image: linear-gradient(145deg, transparent 5%, #000 35%, #000 60%, transparent 90%); }
-.character { position: absolute; inset: 0; transform-style: preserve-3d; }
+.character { position: absolute; inset: 0; top: clamp(-24px, -1.5vw, -12px); bottom: clamp(12px, 1.5vw, 24px); transform-style: preserve-3d; }
 .character svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.modelScene { perspective: none; }
+.modelRobot .greetingSlot { transform: translateY(10px); }
+.modelScene canvas { display: block; touch-action: pan-y; }
+.modelGreeting { opacity: 0; transform: translateY(5px); transition: opacity 220ms ease, transform 300ms ease; }
+.modelGreeting[data-visible="true"] { opacity: 1; transform: translateY(0); }
 /* The robot intentionally runs independently of the page animation switch. */
 .robot .float { filter: drop-shadow(0 10px 10px #00000012); animation: hover 6s ease-in-out infinite !important; }
-.robot .shadow { transform-origin: 302px 501px; animation: shadow 6s ease-in-out infinite !important; }
+.robot .shadow { transform-origin: 302px 526px; animation: shadow 6s ease-in-out infinite !important; }
 .robot .eyes { transform-box: fill-box; transform-origin: center; animation: blink 7s linear infinite !important; }
 .robot .headDrift { transform-origin: 300px 245px; animation: headDrift 8s ease-in-out infinite !important; }
 .robot .gaze { animation: gaze 8s ease-in-out infinite !important; }

@@ -774,7 +774,7 @@ html[data-motion="reduced"] { scroll-behavior: auto; }
 .themeOptionVisual { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; padding: 10px; color: var(--text-secondary); border-radius: 999px; transition: background-color var(--motion-feedback, 140ms), color var(--motion-feedback, 140ms), box-shadow var(--motion-feedback, 140ms); }
 .themeOption:hover .themeOptionVisual { color: var(--text-primary); }
 .themeOption[aria-pressed="true"] .themeOptionVisual { color: var(--accent); background: var(--surface-raised); box-shadow: 0 1px 4px rgb(var(--shadow-rgb) / .12), inset 0 0 0 1px var(--border); }
-.themeOption:focus-visible .themeOptionVisual { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.themeOption:focus-visible:not([data-pointer-focus]) .themeOptionVisual { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
 .themeOption:focus-visible { outline: none; }
 .themeOptionText { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 .mobileTheme { margin-top: 10px; padding: 14px 10px 4px; border-top: 1px solid var(--border); }

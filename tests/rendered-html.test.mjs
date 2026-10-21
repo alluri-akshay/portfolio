@@ -84,7 +84,7 @@ test("unknown routes return a not-found response", async () => {
 });
 
 test("named section routes load directly with headings, metadata, and clean navigation", async () => {
-  const routes = [["/projects", "Projects"], ["/experience", "Experience"], ["/about", "About &amp; skills"], ["/contact", "Get in touch."]];
+  const routes = [["/projects", "Projects"], ["/experience", "Experience"], ["/about", "About &amp; skills"], ["/contact", "Reach me by email or LinkedIn."]];
   const home = await (await render()).text();
   for (const [path, heading] of routes) {
     assert.ok(home.includes(`href="${path}"`));
@@ -175,3 +175,5 @@ test("theme initializes in the head and offers an accessible preference on every
     }
   }
 });
+
+

@@ -1,14 +1,16 @@
 "use client";
 
-import { m } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 import { motionTokens } from "../lib/motion-tokens";
 import { useMotionPreference } from "./motion-preferences";
 
-interface EntranceProps { children: ReactNode; className?: string; delay?: number; as?: "div" | "header" | "p" | "article"; variant?: "section" | "quiet" | keyof typeof motionTokens.choreography; coordinated?: boolean }
+interface EntranceProps { children: ReactNode; className?: string; delay?: number; as?: "div" | "header" | "p" | "article"; variant?: "section" | "quiet" | keyof typeof motionTokens.choreography; coordinated?: boolean; respectDevicePreference?: boolean }
 
-export function Reveal({ children, className = "", delay = 0, as = "div", variant = "section", coordinated = false }: EntranceProps) {
-  const { reduced } = useMotionPreference();
+export function Reveal({ children, className = "", delay = 0, as = "div", variant = "section", coordinated = false, respectDevicePreference = false }: EntranceProps) {
+  const { reduced: pageReduced } = useMotionPreference();
+  const deviceReduced = useReducedMotion();
+  const reduced = pageReduced || (respectDevicePreference && deviceReduced);
   const Component = m[as];
   const timing = variant === "section" ? { duration: motionTokens.duration.entrance, distance: motionTokens.entrance.distance }
     : variant === "quiet" ? { duration: motionTokens.duration.quiet, distance: motionTokens.entrance.quietDistance }

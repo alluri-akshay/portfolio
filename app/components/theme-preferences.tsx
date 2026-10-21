@@ -64,15 +64,21 @@ export function ThemeControl() {
         onPointerDown={event => {
           keyboardScroll.current = null;
           if (event.button !== 0) return;
+          // Programmatic focus can retain the browser's previous keyboard
+          // modality. Mark pointer focus so it doesn't show the keyboard ring.
+          event.currentTarget.dataset.pointerFocus = "true";
           // Focusing a clipped input in the sticky header could scroll to its
           // original document position. Keep focus here without moving the page.
           event.preventDefault();
           event.currentTarget.focus({ preventScroll: true });
         }}
-        onFocus={() => {
+        onKeyDown={event => { delete event.currentTarget.dataset.pointerFocus; }}
+        onBlur={event => { delete event.currentTarget.dataset.pointerFocus; }}
+        onFocus={event => {
           const position = keyboardScroll.current;
           keyboardScroll.current = null;
           if (!position) return;
+          delete event.currentTarget.dataset.pointerFocus;
           // Some browsers scroll a sticky control to its original layout position
           // on Tab. Restore only this focus operation, never lock normal scrolling.
           if (focusFrame.current !== undefined) cancelAnimationFrame(focusFrame.current);
