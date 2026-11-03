@@ -11,7 +11,7 @@ export async function pageMetadata(
 ): Promise<Metadata> {
   const requestHeaders = await headers();
   const origin = siteOrigin(requestHeaders);
-  const image = `${origin}/og.png?v=2`;
+  const image = `${origin}/og.jpg?v=3`;
 
   return {
     title,
@@ -22,7 +22,16 @@ export async function pageMetadata(
       title,
       description,
       type,
-      images: [{ url: image, width: 1200, height: 630, alt: `${profile.name} - Software Developer` }],
+      images: [
+        {
+          url: image,
+          secureUrl: image,
+          type: "image/jpeg",
+          width: 1200,
+          height: 630,
+          alt: `${profile.name} - Software Developer`,
+        },
+      ],
     },
     twitter: { card: "summary_large_image", title, description, images: [image] },
   };
