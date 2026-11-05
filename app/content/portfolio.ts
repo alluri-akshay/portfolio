@@ -81,7 +81,7 @@ export interface SkillGroup {
 // and screenshot sources were inspected on 3 October 2026. Unverified business
 // metrics are intentionally omitted; see docs/content-evidence-checklist.md.
 export const profile: Profile = {
-  name: "Akshay Alluri",
+  name: "Alluri Akshay",
   brand: "AA",
   role: "Software developer",
   location: "Rajahmundry, India",
