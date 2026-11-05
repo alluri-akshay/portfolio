@@ -90,7 +90,7 @@ export const profile: Profile = {
   year: 2026,
   email: "alluriakshay878@gmail.com",
   phone: { display: "+91 73866 60463", uri: "tel:+917386660463" },
-  resumeUrl: "/Akshay-Alluri-Resume.pdf",
+  resumeUrl: "/Alluri_Sri_Akshay_Satya_Srinivas_Resume.pdf",
   socials: [
     { label: "GitHub", url: "https://github.com/alluri-akshay" },
     { label: "LinkedIn", url: "https://www.linkedin.com/in/sri-akshay-satya-srinivas-alluri" },
