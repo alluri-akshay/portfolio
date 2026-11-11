@@ -232,7 +232,7 @@ export const projects: Project[] = [
 ];
 
 export const experiences: Experience[] = [{
-  organization: "SuperCommands", role: "Software developer", dates: "May 2026 – present",
+  organization: "SuperCommands", role: "Software developer", dates: "May 2026 – October 2026",
   logo: "/brands/supercommands.png", website: "https://supercommands.com/",
   focus: "Browser extensions & application development",
   technologies: ["React", "Chrome extension APIs", "Git & GitHub"],
